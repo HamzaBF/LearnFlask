@@ -245,6 +245,7 @@ class Avis(db.Model):
   contenu: Mapped[str]
   likes: Mapped[int] = mapped_column(default=0)
   auteur: Mapped[Optional[str]] = mapped_column(String(50))
+  ok: Mapped[bool] = mapped_column(default=False)
 
   id_projet: Mapped[int] = mapped_column(ForeignKey('projets.id'))
   projet: Mapped['Projet'] = relationship(back_populates='avis')
