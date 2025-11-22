@@ -24,8 +24,7 @@ def index():
 @app.route("/projet/<int:idproj>")
 def projet(idproj):
     projet = db.get_or_404(Projet, idproj)
-    avis = db.session.query(Avis).filter_by(id_projet=idproj).all() 
-    return render_template('projet.html', projet=projet, avis=avis)
+    return render_template('projet.html', projet=projet)
 
 
 @app.route("/admin")
