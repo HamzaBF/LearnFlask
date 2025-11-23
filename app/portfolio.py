@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request, url_for
 from app.modeles import Projet, Avis, Contact,db
 from os import path
+from app.forms import FormAvis
 
 app = Flask(__name__, 
             instance_path=path.abspath('instance'), 
@@ -23,6 +24,9 @@ def index():
 
 @app.route("/projet/<int:idproj>")
 def projet(idproj):
+    form = None
+    if 'formavis' in request.values:
+        form =  FormAvis()
     if 'idavis' in request.args:
         idavis = request.args.get('idavis')
         avis = db.get_or_404(Avis, idavis)
@@ -30,7 +34,7 @@ def projet(idproj):
         db.session.commit()
         return redirect(url_for('projet',idproj=idproj, _anchor='liste-avis'))
     projet = db.get_or_404(Projet, idproj)
-    return render_template('projet.html', projet=projet)
+    return render_template('projet.html', projet=projet, formavis=form)
 
 
 @app.route("/admin")
