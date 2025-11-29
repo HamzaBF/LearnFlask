@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for,session
 from app.modeles import Projet, Avis, Contact,db
 from os import path
 from app.forms import FormAvis
@@ -6,6 +6,7 @@ from app.forms import FormAvis
 app = Flask(__name__, 
             instance_path=path.abspath('instance'), 
             instance_relative_config=True)
+app.secret_key = b'DptKUEuWSauLCZpshJaHXUiFGwg'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portfolio.db'
 db.init_app(app)
 
@@ -26,11 +27,11 @@ def index():
 def projet(idproj):
     form = None
     if 'formavis' in request.values:
-        form = FormAvis()
+        # form = FormAvis()
         avis = Avis()
         avis.id_projet = idproj
-        form =  FormAvis(request.form, avis)
-        if request.method == 'POST' and 'avis' in request.values:
+        form =  FormAvis(request.form, avis, meta={'csrf_context': session})
+        if request.method == 'POST' and 'avis' in request.values and form.validate():
             form.populate_obj(avis)
             db.session.add(avis)
             db.session.commit()
