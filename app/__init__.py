@@ -4,9 +4,9 @@ from app.modeles import Projet, Avis, Contact,db
 from os import path
 from app.forms import FormAvis
 
-from flask_security import Security, SQLAlchemyUserDatastore
-from flask_babel import Babel
+from flask_security import Security, SQLAlchemyUserDatastore, hash_password
 from app.modeles import db, Utilisateur, Role
+from flask_babel import Babel
 
 from app import portfolio,admin
 
@@ -24,6 +24,14 @@ def create_app():
     app.security = Security(
         app, SQLAlchemyUserDatastore(db, Utilisateur, Role)
     )
+
+    with app.app_context():
+        admin_mail = app.config['ADMIN_MAIL']
+        if not app.security.datastore.find_user(email=admin_mail):
+            app.security.datastore.create_user(
+                email=admin_mail,
+                password=hash_password(app.config['ADMIN_PASSE_INITIAL']))
+            db.session.commit()
 
 
     @app.errorhandler(404)
