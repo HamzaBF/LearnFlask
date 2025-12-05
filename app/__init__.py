@@ -9,6 +9,7 @@ from app.modeles import db, Utilisateur, Role
 from flask_babel import Babel
 
 from app import portfolio,admin
+from app import client
 
 def create_app():
     app = Flask(__name__, 
@@ -47,6 +48,7 @@ def create_app():
             session.permanent = pref=='y'
     
     app.register_blueprint(portfolio.bp)
+    app.register_blueprint(client.bp)
     app.register_blueprint(admin.bp)
     app.add_url_rule('/', endpoint='portfolio.index')
     return app

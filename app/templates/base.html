@@ -21,6 +21,7 @@
   <ul class="menu">
     <li>
       {% if current_user.is_authenticated %}
+      <li><a href="{{ url_for('client.index') }}">Mon compte</a></li>
       <a href="{{ url_for('security.logout') }}">Se déconnecter</a>
       {% else %}
       <a href="{{ url_for('security.login') }}">Connexion</a>
