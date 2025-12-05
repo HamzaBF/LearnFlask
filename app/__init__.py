@@ -1,0 +1,34 @@
+from datetime import timedelta
+from flask import Flask, render_template, redirect, request, url_for,session,flash
+from app.modeles import Projet, Avis, Contact,db
+from os import path
+from app.forms import FormAvis
+
+from app import portfolio,admin
+
+def create_app():
+    app = Flask(__name__, 
+            instance_path=path.abspath('instance'), 
+            instance_relative_config=True)
+    app.config.from_pyfile('config.py')
+    # app.secret_key = app.config['SECRET_KEY']
+    # app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI']
+    db.init_app(app)
+
+
+    @app.errorhandler(404)
+    @app.route("/oups")
+    def introuvable(e=None):
+        return render_template('introuvable.html')
+
+    @app.before_request
+    def cookies_pref():
+        if 'cookies' in request.args:
+            pref = request.args['cookies']
+            session['cookies'] = pref
+            session.permanent = pref=='y'
+    
+    app.register_blueprint(portfolio.bp)
+    app.register_blueprint(admin.bp)
+    app.add_url_rule('/', endpoint='portfolio.index')
+    return app
