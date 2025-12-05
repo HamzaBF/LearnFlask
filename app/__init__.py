@@ -4,6 +4,10 @@ from app.modeles import Projet, Avis, Contact,db
 from os import path
 from app.forms import FormAvis
 
+from flask_security import Security, SQLAlchemyUserDatastore
+from flask_babel import Babel
+from app.modeles import db, Utilisateur, Role
+
 from app import portfolio,admin
 
 def create_app():
@@ -14,6 +18,12 @@ def create_app():
     # app.secret_key = app.config['SECRET_KEY']
     # app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI']
     db.init_app(app)
+
+    Babel(app)
+
+    app.security = Security(
+        app, SQLAlchemyUserDatastore(db, Utilisateur, Role)
+    )
 
 
     @app.errorhandler(404)
