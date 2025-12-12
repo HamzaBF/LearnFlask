@@ -1,31 +1,38 @@
-from datetime import timedelta
-from flask import Flask, render_template, redirect, request, url_for,session,flash, Blueprint,current_app
-from app.modeles import Projet, Avis, Contact,db
-from os import path
-from app.forms import FormAvis
-from flask_security import auth_required
+from flask import Blueprint, render_template, current_app, request, redirect, url_for, flash
+from app.modeles import Avis, Contact, db, Utilisateur
+from flask_security import roles_required, hash_password
+
+bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
-
-
-
-bp = Blueprint('admin', __name__,url_prefix='/admin')
-
-
-@bp.route("/")
-@auth_required()
+@bp.route("/", methods=['GET', 'POST'])
+@roles_required('admin')
 def index():
-    return render_template('admin/index.html',
-                           avis = db.session.query(Avis).
-                           filter_by(ok=False), 
-                           contacts = db.session.query(Contact).
-                           order_by(Contact.creation.desc())
-                           .limit(current_app.config['PORTFOLIO_ADMIN_MAXCONTACT']),
-                           utilisateurs = [])
+    if request.method == 'POST':
+        email = request.form.get('email')
+        passe = request.form.get('passe')
+        if email and passe:
+            current_app.security.datastore.create_user(
+                email=email,
+                password=hash_password(passe),
+                roles=['client'])
+            db.session.commit()
+
+    return render_template(
+        'admin/index.html', 
+        avis = db.session
+            .query(Avis)
+            .filter_by(ok=False), # .where(Avis.ok == False)
+        contacts = db.session
+            .query(Contact)
+            .order_by(Contact.creation.desc())
+            .limit(current_app.config['PORTFOLIO_ADMIN_MAXCONTACT']),
+        utilisateurs = db.session.query(Utilisateur)
+    )
 
 
 @bp.route("/avis/<int:idavis>/ok")
-@auth_required()
+@roles_required('admin')
 def avis_ok(idavis):
     avis = db.get_or_404(Avis, idavis)
     avis.ok = True
@@ -35,7 +42,7 @@ def avis_ok(idavis):
 
 
 @bp.route("/avis/<int:idavis>/suppr")
-@auth_required()
+@roles_required('admin')
 def avis_suppr(idavis):
     avis = db.get_or_404(Avis, idavis)
     db.session.delete(avis)
@@ -45,7 +52,7 @@ def avis_suppr(idavis):
 
 
 @bp.route("/contact/<int:idcontact>/suppr")
-@auth_required()
+@roles_required('admin')
 def contact_suppr(idcontact):
     contact = db.get_or_404(Contact, idcontact)
     db.session.delete(contact)

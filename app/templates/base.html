@@ -21,6 +21,9 @@
   <ul class="menu">
     <li>
       {% if current_user.is_authenticated %}
+      {% if 'admin' in current_user.roles %}
+      <li><a href="{{ url_for('admin.index') }}">Administration</a>
+      {% endif %}
       <li><a href="{{ url_for('client.index') }}">Mon compte</a></li>
       <a href="{{ url_for('security.logout') }}">Se déconnecter</a>
       {% else %}
