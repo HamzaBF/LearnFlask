@@ -86,6 +86,8 @@
         <tr>
           <th>Email</th>
           <th>Rôles</th>
+          <th>Connexions</th>
+          <th>Actuellement</th>
           <th>Créé le</th>
           <th>Statut</th>
           <th>Logo</th>
@@ -97,6 +99,16 @@
         <tr>
           <td nowrap>{{ u.email }}</td>
           <td nowrap>{{ u.roles|map(attribute='name')|join(', ') }}</td>
+          <td>{% if u.last_login_at %}
+            {{ u.login_count }} connexion(s)<br>
+            Dernière le {{ u.last_login_at.strftime(format_date) }}
+            {% else %}Aucune{% endif %}
+          </td>
+          <td>{% if u.current_login_at %}
+            Adresse IP : {{ u.current_login_ip }}<br>
+            Depuis le {{ u.current_login_at.strftime(format_date) }}
+            {% else %}Déconnecté-é{% endif %}
+          </td>
           <td nowrap>{{ u.create_datetime.strftime(format_date) }}</td>
           <td nowrap>
             {% if u.active %}
@@ -105,8 +117,9 @@
             <span class="label secondary">inactif</span>
             {% endif %}
           </td>
-            <td nowrap>{% if u.logo %}<img src="{{ url_for('static', filename=u.logo) }}" style="height:50px">{% else%}Pas de logo{% endif %}</td>
-            
+          <td nowrap>{% if u.logo %}<img src="{{ url_for('static', filename=u.logo) }}" style="height:50px">{% else
+            %}Pas de logo{% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
