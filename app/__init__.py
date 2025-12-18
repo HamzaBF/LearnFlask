@@ -8,7 +8,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, hash_password
 from app.modeles import db, Utilisateur, Role
 from flask_babel import Babel
 
-from app import portfolio,admin
+from app import portfolio,admin,api_0_1
 from app import client
 
 def create_app():
@@ -55,5 +55,6 @@ def create_app():
     app.register_blueprint(portfolio.bp)
     app.register_blueprint(client.bp)
     app.register_blueprint(admin.bp)
+    app.register_blueprint(api_0_1.bp)
     app.add_url_rule('/', endpoint='portfolio.index')
     return app
