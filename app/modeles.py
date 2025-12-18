@@ -253,6 +253,13 @@ class Avis(db.Model):
   id_projet: Mapped[int] = mapped_column(ForeignKey('projets.id'))
   projet: Mapped['Projet'] = relationship(back_populates='avis')
 
+  def dto(self):
+     return {
+        attr : getattr(self,attr)
+        for attr in ['id','creation','contenu','likes',
+                     'auteur','ok','id_projet']
+     }
+
 
 fsqla.FsModels.set_db_info(db, user_table_name='utilisateurs', role_table_name='roles', webauthn_table_name='webauthn')
 
