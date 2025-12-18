@@ -108,3 +108,27 @@
   </div>
 </div>
 {% endblock %}
+
+
+
+{% block script %}
+<script>
+  const url_api = "{{ url_for('api_0_1.projets_avis_get', idprojet=projet.id) }}"
+  const periode = "{{ config.PORTFOLIO_LIKES_PERIODE }}"
+
+  $(document).ready(() => {
+    setInterval(() => {
+      $.get(url_api, data => {
+        html = ''
+        for (var avis of data.sort((a, b) => b.likes - a.likes)) {
+          html += `<div><h6>${avis.auteur} -\
+		        <a href="?idavis=${avis.id}" class="primary"><i class="fi-like large"></i>\
+              ${avis.likes} like${avis.likes > 1 ? 's' : ''}\
+            </a></h6><blockquote>${avis.contenu}</blockquote></div>`
+        }
+        $('#liste-avis').html(html)
+      });
+    }, periode);
+  });
+</script>
+{% endblock %}
