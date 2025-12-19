@@ -1,7 +1,9 @@
 from datetime import timedelta
 from flask import Flask, render_template, redirect, request, url_for,session,flash
+from flask.cli import with_appcontext
 from app.modeles import Projet, Avis, Contact,db
 from os import path
+import click
 from app.forms import FormAvis
 
 from flask_security import Security, SQLAlchemyUserDatastore, hash_password
@@ -17,6 +19,7 @@ def create_app():
             instance_path=path.abspath('instance'), 
             instance_relative_config=True)
     app.config.from_pyfile('config.py')
+    app.logger.setLevel(app.config['PORTFOLIO_NIVEAU_LOG'])
     # app.secret_key = app.config['SECRET_KEY']
     # app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI']
     db.init_app(app)
@@ -26,8 +29,9 @@ def create_app():
     app.security = Security(
         app, SQLAlchemyUserDatastore(db, Utilisateur, Role)
     )
-    
+
     JWTManager(app)
+    app.logger.info('Sécurité ok')
 
     with app.app_context():
         app.security.datastore.find_or_create_role(name="admin")
@@ -60,4 +64,20 @@ def create_app():
     app.register_blueprint(admin.bp)
     app.register_blueprint(api_0_1.bp)
     app.add_url_rule('/', endpoint='portfolio.index')
+
+    @app.cli.command(help="Modifie un mot de passe utilisateur.")
+    @click.argument('email')
+    @click.argument('passe')
+    @with_appcontext
+    def mdp(email, passe):
+        utilisateur = app.security.datastore.find_user(email=email)
+        if not utilisateur:
+            print("Utilisateur inconnu.")
+            return -1
+        utilisateur.password = hash_password(passe)
+        db.session.commit()
+        print("Mot de passe modifié avec succès.")
+
+    # if you nedd to use click from cli use this flask mdp hamza@gmail.com hamza1
+
     return app
