@@ -7,6 +7,7 @@ from app.forms import FormAvis
 from flask_security import Security, SQLAlchemyUserDatastore, hash_password
 from app.modeles import db, Utilisateur, Role
 from flask_babel import Babel
+from flask_jwt_extended import JWTManager
 
 from app import portfolio,admin,api_0_1
 from app import client
@@ -25,6 +26,8 @@ def create_app():
     app.security = Security(
         app, SQLAlchemyUserDatastore(db, Utilisateur, Role)
     )
+    
+    JWTManager(app)
 
     with app.app_context():
         app.security.datastore.find_or_create_role(name="admin")

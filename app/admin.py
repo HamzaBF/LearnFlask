@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, current_app, request, redirect, url_for, flash
 from app.modeles import Avis, Contact, db, Utilisateur
-from flask_security import roles_required, hash_password
+from flask_security import roles_required, hash_password,current_user
 from re import search
+from flask_jwt_extended import create_access_token
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -31,7 +32,11 @@ def index():
             .query(Contact)
             .order_by(Contact.creation.desc())
             .limit(current_app.config['PORTFOLIO_ADMIN_MAXCONTACT']),
-        utilisateurs = db.session.query(Utilisateur)
+        utilisateurs = db.session.query(Utilisateur),
+        jwt = create_access_token(identity={
+            'email': current_user.email,
+            'roles': [ r.name for r in current_user.roles ]
+        })
     )
 
 

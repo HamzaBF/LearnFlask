@@ -129,3 +129,37 @@
 </div>
 
 {% endblock %}
+
+
+
+{% block script %}
+<script>
+  const url_api = "{{ url_for('api_0_1.contacts_get', ) }}"
+  const url_suppr_tpl = "{{ url_for('admin.contact_suppr', idcontact=98765432) }}"
+  const periode = "{{ config.PORTFOLIO_LIKES_PERIODE }}"
+
+  $(document).ready(() => {
+    setInterval(() => {
+      $.ajax({
+        url: url_api,
+        type: 'GET',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader('Authorization', "Bearer {{ jwt }}");
+        }
+      }).done(data => {
+        html = ''
+        for (var c of data.sort((a, b) => b.creation.localeCompare(a.creation))) {
+          html += `<tr>\
+          <td nowrap>${c.creation}</td>
+          <td nowrap>${c.mail}</td>
+          <td nowrap>${c.sujet}</td>
+          <td>${c.message}</td>
+          <td nowrap><a href="${url_suppr_tpl.replace('98765432', c.id)}" class="button alert small"><i class="fi-x"></i> Suppr.</a></td>
+        </tr>`
+        }
+        $('#liste-contacts').html(html)
+      });
+    }, periode);
+  });
+</script>
+{% endblock %}
