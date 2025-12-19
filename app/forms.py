@@ -23,3 +23,25 @@ class FormAvis(Form):
         validators.InputRequired(),
         info_perso
     ])
+
+
+# class FormContact(Form):
+#     class Meta:
+#         csrf = True
+#         csrf_class = SessionCSRF
+
+#     email = StringField('Email',[
+#         validators.InputRequired(),
+#         validators.Email(),
+#         validators.Length(min=6,max=50)
+#     ])
+
+#     sujet = StringField('Sujet',[
+#         validators.InputRequired(),
+#         validators.Length(min=2,max=20)
+#     ])
+
+#     message = TextAreaField('Message',[
+#         validators.InputRequired(),
+#         validators.Length(min=2,max=100)
+#     ])

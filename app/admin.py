@@ -14,7 +14,7 @@ def index():
         passe = request.form.get('passe')
         logo = request.form.get('logo')
         if email and passe\
-        and logo and search('^img/logos/[a-z]+\.png$',logo):
+        and logo and search(r'^img/logos/[a-z]+\.png$',logo):
             current_app.security.datastore.create_user(
                 email=email,
                 password=hash_password(passe),

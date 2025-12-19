@@ -56,14 +56,15 @@
           <th></th>
         </tr>
       </thead>
-      <tbody>
+    
+        <tbody >
         {% for c in contacts %}
         <tr>
           <td nowrap>{{ c.creation.strftime(format_date) }}</td>
           <td nowrap>{{ c.mail }}</td>
           <td nowrap>{{ c.sujet }}</td>
           <td>{{ c.message }}</td>
-          <td nowrap><a href="{{ url_for('admin.contact_suppr', idcontact=a.id) }}" class="button alert small"><i class="fi-x"></i> Suppr.</a></td>
+          <td nowrap><a href="{{ url_for('admin.contact_suppr', idcontact=c.id) }}" class="button alert small"><i class="fi-x"></i> Suppr.</a></td>
         </tr>
         {% endfor %}
       </tbody>
