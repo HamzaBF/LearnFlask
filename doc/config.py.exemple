@@ -1,3 +1,5 @@
+import logging
+
 # Data
 SQLALCHEMY_DATABASE_URI = 'sqlite:///portfolio.db'
 
@@ -26,6 +28,10 @@ SECURITY_POST_LOGIN_VIEW='client.index'
 
 
 JWT_SECRET_KEY='gQIMqYOBmexDajlJJlGGuEtPXgo'
+
+PORTFOLIO_NIVEAU_LOG = logging.WARNING
+
+
 
 
 
