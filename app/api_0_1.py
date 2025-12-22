@@ -1,6 +1,6 @@
 from flask import Blueprint,jsonify,abort
 from app.modeles import Projet, Avis, db,Contact
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt
 
 bp = Blueprint('api_0_1', __name__,url_prefix='/v0.1')
 
@@ -20,8 +20,9 @@ def erreur(e):
 @bp.get('/contacts')
 @jwt_required()
 def contacts_get():
-    identite = get_jwt_identity()
-    if 'admin' not in identite['roles']:
+    claims = get_jwt()
+    roles = claims.get('roles', [])
+    if 'admin' not in roles:
         abort(403)
     # contacts = Contact.query.all()
     contacts = db.session.query(Contact)
