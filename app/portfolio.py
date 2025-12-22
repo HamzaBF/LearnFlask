@@ -4,6 +4,7 @@ from app.modeles import Projet, Avis, Contact,db
 from os import path
 from markupsafe import Markup
 from app.forms import FormAvis
+from app.services import cache
 
 
 bp = Blueprint('portfolio', __name__,url_prefix='/portfolio')
@@ -21,7 +22,7 @@ def contact(sujet):
     flash("Merci ! Je vous recontacte rapidement.", "success")
     return True
 
-
+@cache.cached()
 @bp.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST' and contact(Markup(request.values.get('sujet')).striptags()):

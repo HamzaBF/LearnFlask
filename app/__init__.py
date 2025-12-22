@@ -6,6 +6,7 @@ from app.modeles import db, Utilisateur, Role, Projet, projets, Avis, avis
 from os import path
 from app import admin, client, portfolio, api_0_1
 from flask.cli import with_appcontext
+from app.services import cache
 import click
 
 
@@ -17,7 +18,9 @@ def create_app(conf = None):
     if conf:
         app.config.update(conf)
     app.logger.setLevel(app.config['PORTFOLIO_NIVEAU_LOG'])
+    
     db.init_app(app)
+    cache.init_app(app)
 
     Babel(app)
 
